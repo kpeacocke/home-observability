@@ -1,0 +1,59 @@
+sources:
+  draytek_syslog_udp:
+    type: socket
+    mode: udp
+    address: 0.0.0.0:1514
+
+  draytek_syslog_tcp:
+    type: socket
+    mode: tcp
+    address: 0.0.0.0:1514
+
+  docker_logs:
+    type: docker_logs
+    docker_host: unix:///var/run/docker.sock
+
+transforms:
+  parse_syslog:
+    type: remap
+    inputs: [draytek_syslog_udp, draytek_syslog_tcp]
+    source: |
+      .source_type = "draytek_syslog"
+      .ingest_ts = now()
+
+  mdns_focus:
+    type: filter
+    inputs: [docker_logs]
+    condition: '.container_name != null && (downcase!(.container_name) =~ "mdns" || downcase!(.container_name) =~ "repeater")'
+
+  normalize_mdns:
+    type: remap
+    inputs: [mdns_focus]
+    source: |
+      .source_type = "mdns_repeater"
+      .ingest_ts = now()
+
+sinks:
+  os_logs_syslog:
+    type: opensearch
+    inputs: [parse_syslog]
+    endpoints: ["http://opensearch:9200"]
+    mode: bulk
+    bulk:
+      index: "logs-network-%Y.%m.%d"
+
+  os_logs_mdns:
+    type: opensearch
+    inputs: [normalize_mdns]
+    endpoints: ["http://opensearch:9200"]
+    mode: bulk
+    bulk:
+      index: "logs-mdns-%Y.%m.%d"
+
+  os_logs_containers:
+    type: opensearch
+    inputs: [docker_logs]
+    endpoints: ["http://opensearch:9200"]
+    mode: bulk
+    bulk:
+      index: "logs-containers-%Y.%m.%d"

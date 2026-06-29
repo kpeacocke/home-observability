@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: Home Observability
+    orgId: 1
+    folder: Home Observability
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/json

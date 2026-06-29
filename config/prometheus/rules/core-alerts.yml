@@ -1,0 +1,42 @@
+groups:
+  - name: core-connectivity
+    rules:
+      - alert: WANUnreachable
+        expr: probe_success{job="blackbox_icmp",instance="1.1.1.1"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: wan
+        annotations:
+          summary: WAN probe failed for 1.1.1.1
+          description: Internet uplink appears down for more than 2 minutes.
+
+      - alert: DNSServiceUnreachable
+        expr: up{job="pihole"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: dns
+        annotations:
+          summary: Pi-hole exporter unreachable
+          description: Pi-hole monitoring endpoint has not been reachable for 2 minutes.
+
+      - alert: HighContainerRestartRate
+        expr: increase(container_start_time_seconds[15m]) > 3
+        for: 5m
+        labels:
+          severity: warning
+          service: containers
+        annotations:
+          summary: Container restart burst detected
+          description: One or more containers restarted repeatedly in the last 15 minutes.
+
+      - alert: HighDiskUsage
+        expr: (node_filesystem_size_bytes{fstype!~"tmpfs|overlay"} - node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"}) / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"} > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          service: storage
+        annotations:
+          summary: Disk usage above 85%
+          description: One or more host filesystems are above 85% usage for 10 minutes.

@@ -1,0 +1,6 @@
+---
+- name: Deploy Home Observability Stack
+  hosts: observability
+  become: true
+  roles:
+    - role: observability_stack

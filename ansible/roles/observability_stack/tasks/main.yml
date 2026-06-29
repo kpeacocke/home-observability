@@ -1,0 +1,44 @@
+---
+- name: Ensure project root exists
+  ansible.builtin.file:
+    path: "{{ observability_project_root }}"
+    state: directory
+    mode: "0755"
+
+- name: Sync repository files to target
+  ansible.posix.synchronize:
+    src: "{{ playbook_dir }}/../"
+    dest: "{{ observability_project_root }}/"
+    delete: false
+
+- name: Ensure env file exists
+  ansible.builtin.copy:
+    src: "{{ observability_project_root }}/compose/.env.example"
+    dest: "{{ observability_project_root }}/compose/.env"
+    remote_src: true
+    force: false
+
+- name: Start observability stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ compose_dir }}"
+    state: present
+
+- name: Validate Prometheus is up
+  ansible.builtin.uri:
+    url: http://127.0.0.1:9090/-/healthy
+    method: GET
+    status_code: 200
+  register: prometheus_health
+  retries: 10
+  delay: 6
+  until: prometheus_health.status == 200
+
+- name: Validate Grafana is up
+  ansible.builtin.uri:
+    url: http://127.0.0.1:3000/api/health
+    method: GET
+    status_code: 200
+  register: grafana_health
+  retries: 10
+  delay: 6
+  until: grafana_health.status == 200

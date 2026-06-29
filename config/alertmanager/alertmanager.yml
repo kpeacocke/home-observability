@@ -1,0 +1,38 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: slack-default
+  group_by: [alertname, severity, service]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  routes:
+    - matchers:
+        - severity="critical"
+      receiver: slack-critical
+    - matchers:
+        - notify="discord"
+      receiver: discord-mirror
+
+receivers:
+  - name: slack-default
+    slack_configs:
+      # Replace with your real Slack webhook URL.
+      - api_url: https://hooks.slack.com/services/REPLACE/ME
+        channel: '#homelab-alerts'
+        title: '{{ .CommonLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}'
+
+  - name: slack-critical
+    slack_configs:
+      # Replace with your real Slack webhook URL.
+      - api_url: https://hooks.slack.com/services/REPLACE/ME
+        channel: '#homelab-critical'
+        title: 'CRITICAL: {{ .CommonLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}'
+
+  - name: discord-mirror
+    webhook_configs:
+      # Replace with your real Discord webhook URL.
+      - url: https://discord.com/api/webhooks/REPLACE/ME

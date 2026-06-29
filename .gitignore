@@ -1,0 +1,10 @@
+# Secrets
+compose/.env
+
+# Local data dirs (if bind-mounted later)
+data/
+*.log
+
+# OS/editor
+.DS_Store
+.vscode/

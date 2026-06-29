@@ -1,0 +1,22 @@
+observability_project_root: /opt/home-observability
+compose_dir: "{{ observability_project_root }}/compose"
+config_dir: "{{ observability_project_root }}/config"
+
+alert_channels:
+  slack_enabled: true
+  discord_enabled: true
+
+retention_days: 90
+
+awx_policy:
+  auto_allowed:
+    - diagnostics
+    - evidence_collection
+    - notifications
+  single_approval_required:
+    - service_restart
+    - config_reload
+  dual_approval_required:
+    - firewall_policy_change
+    - dns_policy_change
+    - routing_change
