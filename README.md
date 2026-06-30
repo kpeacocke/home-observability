@@ -26,10 +26,25 @@ This repository contains a phased, Ansible-first observability and SIEM-lite sta
 ## Quick Start
 
 1. Copy `compose/.env.example` to `compose/.env` and fill values.
-2. Review and update IPs/targets in `config/prometheus/prometheus.yml`.
-3. Deploy with Portainer or Docker Compose from `compose/docker-compose.yml`.
-4. Configure DrayTek syslog to send to NAS IP port `1514` (UDP/TCP).
-5. Enable SNMP on DrayTek and Synology, then set credentials in `config/snmp/snmp.yml`.
+2. Required env vars in `compose/.env`:
+	- `OBS_ROOT` (absolute NAS path to this repo)
+	- `GRAFANA_ADMIN_USER`
+	- `GRAFANA_ADMIN_PASSWORD`
+	- `PIHOLE_HOST`
+	- `PIHOLE_PASSWORD`
+3. Review and update IPs/targets in `config/prometheus/prometheus.yml`.
+4. Deploy with Portainer or Docker Compose from `compose/docker-compose.yml`.
+5. Configure DrayTek syslog to send to NAS IP port `1514` (UDP/TCP).
+6. Enable SNMP on DrayTek and Synology, then set credentials in `config/snmp/snmp.yml`.
+
+## Portainer on Synology (Best Path)
+
+Use the same compose file and the deployment guide:
+
+- `compose/docker-compose.yml`
+- `docs/portainer-on-synology.md`
+
+Note: this stack uses host bind mounts. `OBS_ROOT` must point to a real project checkout on the NAS host filesystem.
 
 ## Run with Compose
 
