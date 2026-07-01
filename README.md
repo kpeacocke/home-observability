@@ -30,8 +30,10 @@ This repository contains a phased, Ansible-first observability and SIEM-lite sta
 	- `OBS_ROOT` (absolute NAS path to this repo)
 	- `GRAFANA_ADMIN_USER`
 	- `GRAFANA_ADMIN_PASSWORD`
-	- `PIHOLE_HOST`
-	- `PIHOLE_PASSWORD`
+	- `PIHOLE1_HOST`
+	- `PIHOLE1_PASSWORD`
+	- `PIHOLE2_HOST`
+	- `PIHOLE2_PASSWORD`
 3. Review and update IPs/targets in `config/prometheus/prometheus.yml`.
 4. Deploy with Portainer or Docker Compose from `compose/docker-compose.yml`.
 5. Configure DrayTek syslog to send to NAS IP port `1514` (UDP/TCP).

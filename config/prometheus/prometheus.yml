@@ -14,9 +14,13 @@ scrape_configs:
     static_configs:
       - targets: ["cadvisor:8080"]
 
-  - job_name: pihole
+  - job_name: pihole_primary
     static_configs:
-      - targets: ["pihole_exporter:9617"]
+      - targets: ["pihole_exporter_primary:9617"]
+
+  - job_name: pihole_secondary
+    static_configs:
+      - targets: ["pihole_exporter_secondary:9618"]
 
   - job_name: snmp_draytek
     metrics_path: /snmp
@@ -56,7 +60,7 @@ scrape_configs:
     params:
       module: [dns_udp]
     static_configs:
-      # Replace with your Pi-hole IP.
+      # Replace with your primary Pi-hole IP.
       - targets: ["192.168.1.10:53"]
     relabel_configs:
       - source_labels: [__address__]

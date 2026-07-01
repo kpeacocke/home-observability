@@ -48,8 +48,10 @@ In Portainer:
 - `OBS_ROOT=/volume1/docker/home-observability`
 - `GRAFANA_ADMIN_USER=admin`
 - `GRAFANA_ADMIN_PASSWORD=<strong password>`
-- `PIHOLE_HOST=http://<pihole-ip>`
-- `PIHOLE_PASSWORD=<pihole-password>`
+- `PIHOLE1_HOST=http://<primary-pihole-ip>`
+- `PIHOLE1_PASSWORD=<primary-pihole-password>`
+- `PIHOLE2_HOST=http://<secondary-pihole-ip>`
+- `PIHOLE2_PASSWORD=<secondary-pihole-password>`
 
 Note: the repository method in Portainer only provides the compose content. Runtime config mounts still come from `OBS_ROOT` on the host.
 

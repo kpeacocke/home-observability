@@ -163,18 +163,34 @@ services:
       - obs_net
     restart: unless-stopped
 
-  pihole_exporter:
+  pihole_exporter_primary:
     image: ekofr/pihole-exporter:latest
-    container_name: pihole_exporter
+    container_name: pihole_exporter_primary
     env_file:
       - .env
     environment:
-      - PIHOLE_HOSTNAME=${PIHOLE_HOST}
-      - PIHOLE_PASSWORD=${PIHOLE_PASSWORD}
+      - PIHOLE_HOSTNAME=${PIHOLE1_HOST}
+      - PIHOLE_PASSWORD=${PIHOLE1_PASSWORD}
       - PORT=9617
       - INTERVAL=30s
     ports:
       - "9617:9617"
+    networks:
+      - obs_net
+    restart: unless-stopped
+
+  pihole_exporter_secondary:
+    image: ekofr/pihole-exporter:latest
+    container_name: pihole_exporter_secondary
+    env_file:
+      - .env
+    environment:
+      - PIHOLE_HOSTNAME=${PIHOLE2_HOST}
+      - PIHOLE_PASSWORD=${PIHOLE2_PASSWORD}
+      - PORT=9618
+      - INTERVAL=30s
+    ports:
+      - "9618:9618"
     networks:
       - obs_net
     restart: unless-stopped
