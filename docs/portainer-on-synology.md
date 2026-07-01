@@ -52,6 +52,7 @@ In Portainer:
 - `PIHOLE1_PASSWORD=<primary-pihole-password>`
 - `PIHOLE2_HOST=http://<secondary-pihole-ip>`
 - `PIHOLE2_PASSWORD=<secondary-pihole-password>`
+- `CADVISOR_HOST_PORT=18080` (optional, change if needed)
 
 Note: the repository method in Portainer only provides the compose content. Runtime config mounts still come from `OBS_ROOT` on the host.
 
@@ -78,6 +79,7 @@ Note: the repository method in Portainer only provides the compose content. Runt
 ## Synology caveats
 
 - `cadvisor` may need adjustment depending on your Synology Docker runtime paths.
+- If deployment fails with `port is already allocated` for cAdvisor, set a different `CADVISOR_HOST_PORT` in Portainer (for example `18081`).
 - If `cadvisor` fails, keep stack running and temporarily remove that service while retaining node metrics + SNMP + logs.
 - Keep this stack LAN-only or behind VPN/reverse proxy with auth.
 

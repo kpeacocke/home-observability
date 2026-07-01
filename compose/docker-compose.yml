@@ -132,7 +132,7 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker:/var/lib/docker:ro
     ports:
-      - "8080:8080"
+      - "${CADVISOR_HOST_PORT:-18080}:8080"
     networks:
       - obs_net
     restart: unless-stopped
