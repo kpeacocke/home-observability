@@ -12,14 +12,54 @@ groups:
           description: Internet uplink appears down for more than 2 minutes.
 
       - alert: DNSServiceUnreachable
-        expr: up{job="pihole"} == 0
+        expr: up{job=~"pihole_(primary|secondary)"} == 0
         for: 2m
         labels:
           severity: critical
           service: dns
         annotations:
           summary: Pi-hole exporter unreachable
-          description: Pi-hole monitoring endpoint has not been reachable for 2 minutes.
+          description: One or more Pi-hole monitoring endpoints have been unreachable for 2 minutes.
+
+      - alert: MDNSReflectorExporterDown
+        expr: up{job="mdns_reflector"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: mdns
+        annotations:
+          summary: pi-mdns metrics endpoint is unreachable
+          description: Prometheus has been unable to scrape pi-mdns for more than 2 minutes.
+
+      - alert: MDNSBrowseFailed
+        expr: mdns_browse_success == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: mdns
+        annotations:
+          summary: Avahi browse failed on pi-mdns
+          description: The reflector exporter cannot complete an Avahi browse.
+
+      - alert: MDNSInterfaceDown
+        expr: mdns_interface_up == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: mdns
+        annotations:
+          summary: Expected mDNS VLAN interface is down
+          description: "Interface {{ $labels.interface }} (VLAN {{ $labels.vlan }}, {{ $labels.role }}) has been down or missing for more than 2 minutes."
+
+      - alert: MDNSVLANDiscoveryEmpty
+        expr: mdns_services_total == 0
+        for: 15m
+        labels:
+          severity: warning
+          service: mdns
+        annotations:
+          summary: No mDNS services visible on a reflected VLAN
+          description: "No mDNS services have been visible on {{ $labels.interface }} ({{ $labels.role }}) for 15 minutes."
 
       - alert: HighContainerRestartRate
         expr: increase(container_start_time_seconds[15m]) > 3
