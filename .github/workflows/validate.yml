@@ -1,0 +1,30 @@
+name: Validate Observability Configuration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Validate Compose
+        run: docker compose -f compose/docker-compose.yml config --quiet
+
+      - name: Validate Prometheus configuration and rules
+        run: |
+          docker run --rm             -v "$PWD/config/prometheus:/etc/prometheus:ro"             --entrypoint /bin/promtool             prom/prometheus:v2.54.1             check config /etc/prometheus/prometheus.yml
+
+      - name: Validate Grafana dashboard JSON
+        run: |
+          for dashboard in config/grafana/provisioning/dashboards/json/*.json; do
+            python3 -m json.tool "$dashboard" >/dev/null
+          done
